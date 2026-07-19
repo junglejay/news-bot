@@ -110,14 +110,15 @@ def fetch_scholar_research():
             response = requests.get(jina_url, timeout=20)
             if response.status_code == 200:
                 content = response.text[:6000]
-                prompt = f"你是一个专业研究助手。请从以下抓取内容中提炼关于【{topic}】的最新的真实研究标题和核心观点。若内容被拦截，请回复“抓取受限”。\n内容：{content}"
+                prompt = f"你是一个专业研究助手。请从以下抓取内容中提炼关于【{topic}】的最新的真实研究标题和核心观点。若内容被拦截，请回复\"抓取受限\"。\n\n内容：{content}"
                 res = client.chat.completions.create(
                     model=AI_MODEL,
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.3
                 )
                 academic_report += f"#### {topic}\n> {res.choices[0].message.content}\n\n"
-        except:
+        except Exception as e:
+            print(f"⚠️ 模块获取失败 ({topic}): {e}")
             continue
     return academic_report + "---\n"
 
